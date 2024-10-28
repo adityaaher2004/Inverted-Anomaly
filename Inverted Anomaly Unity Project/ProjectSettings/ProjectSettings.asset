@@ -161,7 +161,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Standalone: com.DefaultCompany.Alteruna-First-Person-Shooter
+    Standalone: com.DefaultCompany.Inverted-Anomaly-Unity-Project
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -746,7 +746,7 @@ PlayerSettings:
   hmiLogStartupTiming: 0
   hmiCpuConfiguration: 
   apiCompatibilityLevel: 6
-  activeInputHandler: 0
+  activeInputHandler: 2
   windowsGamepadBackendHint: 0
   cloudProjectId: 23bc4dbc-1b94-43a9-a6a8-79f24320daa9
   framebufferDepthMemorylessMode: 0

@@ -5,9 +5,6 @@ using UnityEngine;
 public class SampleCube : MonoBehaviour
 {
 
-    public bool isRewinding;
-    List<PointInTime> points;
-
     Rigidbody rb;
 
     Rewindable rewinder;
@@ -15,8 +12,6 @@ public class SampleCube : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        points = new List<PointInTime>();
-        isRewinding = false;
         rb = GetComponent<Rigidbody>();
         rewinder = new Rewindable(gameObject);
     }
@@ -24,20 +19,37 @@ public class SampleCube : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        // Need this snippet to check if rewinding
+        // --------------------------------
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
-            rewinder.StartRewind();
-
+            StartRewind();
         }
         if (Input.GetKeyUp(KeyCode.LeftAlt))
         {
-            rewinder.StopRewind();
+            StopRewind();
         }
+        // --------------------------------
 
     }
 
     void FixedUpdate()
     {
+        // Need this line to apply rewinding
+        // --------------------------------
         rewinder.physUpdate();
+        // --------------------------------
     }
+
+    void StartRewind()
+    {
+        rewinder.StartRewind();
+    }
+
+    void StopRewind()
+    {
+        rewinder.StopRewind();
+    }
+
 }
