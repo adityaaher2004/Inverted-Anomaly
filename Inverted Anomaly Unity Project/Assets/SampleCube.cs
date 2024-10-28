@@ -10,12 +10,15 @@ public class SampleCube : MonoBehaviour
 
     Rigidbody rb;
 
+    Rewindable rewinder;
+
     // Start is called before the first frame update
     void Start()
     {
         points = new List<PointInTime>();
         isRewinding = false;
         rb = GetComponent<Rigidbody>();
+        rewinder = new Rewindable(gameObject);
     }
 
     // Update is called once per frame
@@ -23,58 +26,18 @@ public class SampleCube : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
-            StartRewind();
+            rewinder.StartRewind();
+
         }
         if (Input.GetKeyUp(KeyCode.LeftAlt))
         {
-            StopRewind();
+            rewinder.StopRewind();
         }
 
     }
 
     void FixedUpdate()
     {
-        if (isRewinding)
-        {
-            Rewind();
-        }
-        else
-        {
-            Record();
-        }
+        rewinder.physUpdate();
     }
-
-    public void Record()
-    {
-        points.Insert(0, new PointInTime(transform.position, transform.rotation));
-    }
-    
-    public void Rewind()
-    {
-        if (points.Count > 0)
-        {
-            PointInTime latest = points[0];
-            transform.position = latest.position;
-            transform.rotation = latest.rotation;
-            points.RemoveAt(0);
-
-        }
-        else
-        {
-            StopRewind();
-        }
-    }
-
-    void StartRewind()
-    {
-        isRewinding = true;
-        rb.isKinematic = true;
-    }
-
-    void StopRewind()
-    {
-        isRewinding = false;
-        rb.isKinematic = false;
-    }
-
 }
