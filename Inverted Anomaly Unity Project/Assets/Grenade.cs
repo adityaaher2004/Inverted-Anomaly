@@ -8,29 +8,33 @@ public class Grenade : MonoBehaviour
 
     // Grenade Specific Variables
     // -------------------------
-    float cookTime = 2f;
+    [SerializeField] float cookTime = 2f;
+    [SerializeField] bool isDestructable = false;
     float timer;
     float blastRadius = 25f;
-    float blastForce = 5000f;
+    [SerializeField] float blastForce = 5000f;
     bool hasExploded = false;
-    // -------------------------
+    // ------------------------
 
 
     // Rewinder Variables
     // ------------------
     Rigidbody rb;
     Rewindable rewinder;
-    List<bool> isActiveRewinderFrames;
-    List<float> grenadeTimerFrames;
-    bool grenadeIsRewinding = false;
+    Stack<bool> isActiveRewinderFrames;
+    Stack<float> grenadeTimerFrames;
+    bool isMeshRendering;
     // ------------------
+
+    [SerializeField] GameManager gameManager;
 
     void Start()
     {
         timer = cookTime;
-        isActiveRewinderFrames = new List<bool>();
-        grenadeTimerFrames = new List<float>();
-        rewinder = new Rewindable(gameObject);
+        isMeshRendering = true;
+        isActiveRewinderFrames = new Stack<bool>();
+        grenadeTimerFrames = new Stack<float>();
+        rewinder = new Rewindable(gameObject, isDestructable);
     }
 
     // Update is called once per frame
@@ -45,11 +49,11 @@ public class Grenade : MonoBehaviour
 
         // Need this snippet to check if rewinding
         // --------------------------------
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        if (gameManager.globalIsRewinding)
         {
             StartRewind();
         }
-        if (Input.GetKeyUp(KeyCode.LeftAlt))
+        if (gameManager.globalIsRewinding)
         {
             StopRewind();
         }
@@ -79,27 +83,32 @@ public class Grenade : MonoBehaviour
             }
         }
 
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        isMeshRendering = false;
+        foreach (MeshRenderer mesh in gameObject.GetComponentsInChildren<MeshRenderer>())
+        {
+            mesh.enabled = false;
+        }
     }
 
     void Record()
     {
-        isActiveRewinderFrames.Insert(0, gameObject.GetComponent<MeshRenderer>().enabled == true);
-        grenadeTimerFrames.Insert(0, timer);
-        
+        isActiveRewinderFrames.Push(isMeshRendering);
+        grenadeTimerFrames.Push(timer);
     }
 
     void Rewind()
     {
         if (isActiveRewinderFrames.Count > 0)
         {
-            bool latestActiveStatus = isActiveRewinderFrames[0];
-            gameObject.GetComponent<MeshRenderer>().enabled = latestActiveStatus;
+            bool latestActiveStatus = isActiveRewinderFrames.Pop();
+            foreach(MeshRenderer mesh in gameObject.GetComponentsInChildren<MeshRenderer>())
+            {
+                mesh.enabled = latestActiveStatus;
+            }
             hasExploded = !latestActiveStatus;
-            timer = grenadeTimerFrames[0];
+            isMeshRendering = latestActiveStatus;
+            timer = grenadeTimerFrames.Pop();
 
-            grenadeTimerFrames.RemoveAt(0);
-            isActiveRewinderFrames.RemoveAt(0);
         }
         else
         {
@@ -109,20 +118,18 @@ public class Grenade : MonoBehaviour
 
     void StartRewind()
     {
-        grenadeIsRewinding = true;
         rewinder.StartRewind();
     }
 
     void StopRewind()
     {
-        grenadeIsRewinding = false;
         rewinder.StopRewind();
     }
 
     void physUpdate()
     {
-        rewinder.physUpdate();
-        if (grenadeIsRewinding)
+        rewinder.physUpdate(gameManager.globalIsRewinding);
+        if (gameManager.globalIsRewinding)
         {
             Rewind();
         }

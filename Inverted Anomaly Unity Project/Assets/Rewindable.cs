@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 public class Rewindable
 {
@@ -13,28 +14,58 @@ public class Rewindable
      * - The Rewind variable unwinds this list of variables
      * - The physUpdate() implements the rewind control mechanism 
      * 
+     * To implement rewinding:
+     * 
+     * void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                rewinder.StartRewind();
+            }
+            if (Input.GetKeyUp(KeyCode.R))
+            {
+                rewinder.StopRewind();
+            }
+        }
+
+      void FixedUpdate()
+        {
+            rewinder.physUpdate();
+        }
+
+     * 
      * This class does not implement specific rewinding such as re-calculating timer for grenades
      * You need to implement variable specific rewinding in the required class
      * 
      * Tip: To implement rewinding for specific variables:
-     * - Create bool isRewinding and 5 new methods : StartRewind, StopRewind, Rewind, Record, physUpdate
+     * - Create bool isRewinding and 5 new methods for your object: StartRewind, StopRewind, Rewind, Record, physUpdate
      * - Each one must mimic the implementations as below
      * Refer to Grendade class for an implementation
      */
 
-    public bool isRewinding = false;
     List<PointInTime> points = new List<PointInTime>();
-
-    Rigidbody rb;
 
     Transform transform;
     GameObject gameObject;
 
+
+    /*
+     * For entities Instantiated during gameplay such as bullets 
+     * Once the rewind stack is empty, destroy the gameObject if destructMode is true
+     */
+    bool destructMode = false;
+
     public Rewindable(GameObject gameObject)
     {
         this.gameObject = gameObject;
-        rb = gameObject.GetComponent<Rigidbody>();
         this.transform = gameObject.transform;
+    }
+
+    public Rewindable(GameObject gameObject, bool destructable)
+    {
+        this.gameObject = gameObject;
+        this.transform = gameObject.transform;
+        this.destructMode = destructable;
     }
 
 
@@ -61,17 +92,19 @@ public class Rewindable
 
     public void StartRewind()
     {
-        isRewinding = true;
         gameObject.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     public void StopRewind()
     {
-        isRewinding = false;
         gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        if (destructMode && points.Count <= 0)
+        {
+            UnityEngine.Object.Destroy(gameObject);
+        }
     }
 
-    public void physUpdate()
+    public void physUpdate(bool isRewinding)
     {
         if (isRewinding)
         {

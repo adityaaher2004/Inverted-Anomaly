@@ -9,6 +9,8 @@ public class SampleCube : MonoBehaviour
 
     Rewindable rewinder;
 
+    [SerializeField] GameManager gameManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,11 +24,11 @@ public class SampleCube : MonoBehaviour
         
         // Need this snippet to check if rewinding
         // --------------------------------
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        if (gameManager.globalIsRewinding)
         {
             StartRewind();
         }
-        if (Input.GetKeyUp(KeyCode.LeftAlt))
+        if (gameManager.globalIsRewinding)
         {
             StopRewind();
         }
@@ -38,7 +40,7 @@ public class SampleCube : MonoBehaviour
     {
         // Need this line to apply rewinding
         // --------------------------------
-        rewinder.physUpdate();
+        rewinder.physUpdate(gameManager.globalIsRewinding);
         // --------------------------------
     }
 

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21c184c50662da42887daf9b0e05a0d, type: 3}
+  m_Name: Glock Shoot Config
+  m_EditorClassIdentifier: 
+  HitMask:
+    serializedVersion: 2
+    m_Bits: 197
+  Spread: {x: 0.05, y: 0.05, z: 0.05}
+  FireRate: 0.25
+  BulletPrefab: {fileID: 1145695808335116723, guid: 1c791b4e9af09fa4fa6a356238447033, type: 3}
+  SpawnForce: 1000
