@@ -21,14 +21,12 @@ public class GunScriptableObject : ScriptableObject
     private float LastShootTime;
     private ParticleSystem ShootSystem;
     private ObjectPool<TrailRenderer> TrailPool;
-    private ObjectPool<Bullet> BulletPool;
 
     public void Spawn(Transform Parent, MonoBehaviour ActiveMonoBehaviour)
     {
         this.ActiveMonoBehaviour = ActiveMonoBehaviour;
         LastShootTime = 0;
         TrailPool= new ObjectPool<TrailRenderer>(CreateTrail);
-        BulletPool = new ObjectPool<Bullet>(CreateBullet);
 
         Model = Instantiate(ModelPrefab);
         Model.transform.SetParent(Parent, false);
@@ -53,9 +51,16 @@ public class GunScriptableObject : ScriptableObject
 
             ShootDirection.Normalize();
 
-            Instantiate(BulletModelPrefab, ShootSystem.transform.position, ShootSystem.transform.rotation);
+            GameObject spawnedBullet =  Instantiate(BulletModelPrefab, ShootSystem.transform.position, ShootSystem.transform.rotation);
 
-            ProjectileShoot(ShootDirection);
+            ActiveMonoBehaviour.StartCoroutine(
+                   PlayTrail(
+                       spawnedBullet.transform.position,
+                       spawnedBullet.transform.position + (ShootDirection * TrailConfig.MissDistance * 2),
+                       new RaycastHit()
+                       ));
+
+
 
             // Only for HitScan Shots, for Projectile Shots, we do ProjectileShoot
             /*if (Physics.Raycast(ShootSystem.transform.position, ShootDirection, out RaycastHit hit, float.MaxValue, ShootConfig.HitMask))
@@ -118,38 +123,6 @@ public class GunScriptableObject : ScriptableObject
 
         TrailPool.Release(instance);
 
-
-    }
-
-    private void ProjectileShoot(Vector3 shootDirection){
-        Bullet bullet = BulletPool.Get();
-        bullet.gameObject.SetActive(true);
-        bullet.OnCollision += HandleBulletCollision;
-        bullet.transform.position = ShootSystem.transform.position;
-        bullet.Spawn(shootDirection * ShootConfig.SpawnForce);
-
-        TrailRenderer trail = TrailPool.Get();
-        if (trail != null)
-        {
-            trail.transform.SetParent(bullet.transform, false);
-            trail.transform.localPosition = Vector3.zero;
-            trail.emitting = true;
-            trail.gameObject.SetActive(true);
-        }
-
-    }
-
-    private void HandleBulletCollision(Bullet bullet, Collision collision)
-    {
-        TrailRenderer trail = bullet.GetComponentInChildren<TrailRenderer>();
-        if (trail != null)
-        {
-            trail.transform.SetParent(null, true);
-            ActiveMonoBehaviour.StartCoroutine(DelayedDisableTrail(trail));
-        }
-
-        bullet.gameObject.SetActive(false);
-        BulletPool.Release(bullet);
     }
 
     private IEnumerator DelayedDisableTrail(TrailRenderer trail)

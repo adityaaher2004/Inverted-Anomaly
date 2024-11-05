@@ -18,4 +18,4 @@ MonoBehaviour:
   Spread: {x: 0.05, y: 0.05, z: 0.05}
   FireRate: 0.5
   BulletPrefab: {fileID: 1145695808335116723, guid: 1c791b4e9af09fa4fa6a356238447033, type: 3}
-  SpawnForce: 200
+  SpawnForce: 1000

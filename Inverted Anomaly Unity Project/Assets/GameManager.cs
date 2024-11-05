@@ -6,15 +6,28 @@ using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
+
+    public static GameManager instance;
+
     [SerializeField] TextMeshProUGUI globalGameTimeText;
     float globalGameTime;
 
-    [SerializeField] public bool globalIsRewinding;
+    public bool globalIsRewinding;
 
     Stack<float> globalGameTimePoints;
 
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        globalIsRewinding = false;
         globalGameTime = 0;
         globalGameTimePoints = new Stack<float>();
     }
@@ -26,7 +39,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         float microSeconds = Mathf.Round((globalGameTime % 1) * 100);
-        int seconds = (int)globalGameTime / 1;
+        int seconds = (int) globalGameTime / 1;
         if (seconds < 10)
         {
             globalGameTimeText.text = "0" + seconds + ":" + microSeconds;

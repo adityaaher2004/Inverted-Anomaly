@@ -17,6 +17,6 @@ MonoBehaviour:
   ModelPrefab: {fileID: 1967095731802238107, guid: 29e0031250450b445bef64656bca29ee, type: 3}
   BulletModelPrefab: {fileID: 4236698296437149449, guid: 1c791b4e9af09fa4fa6a356238447033, type: 3}
   SpawnPoint: {x: 0.177, y: 0.287, z: -0.306}
-  SpawnRotation: {x: 5.831, y: 100.802, z: 176.111}
+  SpawnRotation: {x: 174.169, y: -74, z: -3.889008}
   ShootConfig: {fileID: 11400000, guid: e939c43efdae7914da09cf59ec5c594f, type: 2}
   TrailConfig: {fileID: 11400000, guid: 25804a12e3da7414d8bba0bdca3dc5e2, type: 2}

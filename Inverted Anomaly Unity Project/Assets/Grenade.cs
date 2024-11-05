@@ -14,6 +14,7 @@ public class Grenade : MonoBehaviour
     float blastRadius = 25f;
     [SerializeField] float blastForce = 5000f;
     bool hasExploded = false;
+    bool grenadeIsRewinding;
     // ------------------------
 
 
@@ -26,14 +27,14 @@ public class Grenade : MonoBehaviour
     bool isMeshRendering;
     // ------------------
 
-    [SerializeField] GameManager gameManager;
-
     void Start()
     {
         timer = cookTime;
         isMeshRendering = true;
         isActiveRewinderFrames = new Stack<bool>();
+        grenadeIsRewinding = false;
         grenadeTimerFrames = new Stack<float>();
+        
         rewinder = new Rewindable(gameObject, isDestructable);
     }
 
@@ -49,11 +50,11 @@ public class Grenade : MonoBehaviour
 
         // Need this snippet to check if rewinding
         // --------------------------------
-        if (gameManager.globalIsRewinding)
+        if (Input.GetKeyDown(KeyCode.T))
         {
             StartRewind();
         }
-        if (gameManager.globalIsRewinding)
+        if (Input.GetKeyUp(KeyCode.T))
         {
             StopRewind();
         }
@@ -113,23 +114,26 @@ public class Grenade : MonoBehaviour
         else
         {
             StopRewind();
+            isMeshRendering = true;
         }
     }
 
     void StartRewind()
     {
+        grenadeIsRewinding = true;
         rewinder.StartRewind();
     }
 
     void StopRewind()
     {
+        grenadeIsRewinding = false;
         rewinder.StopRewind();
     }
 
     void physUpdate()
     {
-        rewinder.physUpdate(gameManager.globalIsRewinding);
-        if (gameManager.globalIsRewinding)
+        rewinder.physUpdate(grenadeIsRewinding);
+        if (grenadeIsRewinding)
         {
             Rewind();
         }
