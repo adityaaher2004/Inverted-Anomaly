@@ -35,10 +35,16 @@ public class InvertGamePlay : MonoBehaviour
 
             GameObject newPlayer = Instantiate(PlayerPrefab, ZoneB.transform.position, ZoneB.transform.rotation);
             newPlayer.GetComponent<PlayerInput>().camera = currentPlayer.GetComponent<PlayerInput>().camera;
+            newPlayer.GetComponent<PlayerInput>().ActivateInput();
 
             currentPlayer.GetComponent<StarterAssetsInputs>().enabled = false;
-            currentPlayer.GetComponent<PlayerInput>().DeactivateInput();
+            currentPlayer.GetComponent<PlayerInput>().enabled =  false;
+            currentPlayer.GetComponent<CharacterController>().enabled = false;
+            currentPlayer.GetComponent<ThirdPersonController>().enabled = false;
             currentPlayer.GetComponent<PlayerAction>().enabled = false;
+
+            newPlayer.GetComponent<PlayerInput>().enabled = false;
+            newPlayer.GetComponent<PlayerInput>().enabled = true;
 
             instantiated = true;
 
