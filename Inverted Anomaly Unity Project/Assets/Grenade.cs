@@ -1,17 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 public class Grenade : MonoBehaviour
 {
 
     // Grenade Specific Variables
     // -------------------------
-    [SerializeField] float cookTime = 2f;
+    [SerializeField] float cookTime = 0f;
     [SerializeField] bool isDestructable = false;
     float timer;
-    float blastRadius = 25f;
+    [SerializeField] float blastRadius = 25f;
     [SerializeField] float blastForce = 5000f;
     bool hasExploded = false;
     bool grenadeIsRewinding;
@@ -24,6 +26,8 @@ public class Grenade : MonoBehaviour
     Rewindable rewinder;
     Stack<bool> isActiveRewinderFrames;
     Stack<float> grenadeTimerFrames;
+
+    GlobalIsRewindingScript globalRewinder;
     bool isMeshRendering;
     // ------------------
 
@@ -34,7 +38,7 @@ public class Grenade : MonoBehaviour
         isActiveRewinderFrames = new Stack<bool>();
         grenadeIsRewinding = false;
         grenadeTimerFrames = new Stack<float>();
-        
+        globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
         rewinder = new Rewindable(gameObject, isDestructable);
     }
 
@@ -50,11 +54,11 @@ public class Grenade : MonoBehaviour
 
         // Need this snippet to check if rewinding
         // --------------------------------
-        if (Input.GetKeyDown(KeyCode.T))
+        if (globalRewinder.fireStartRewind)
         {
             StartRewind();
         }
-        if (Input.GetKeyUp(KeyCode.T))
+        if (globalRewinder.fireStopRewind)
         {
             StopRewind();
         }
@@ -132,7 +136,7 @@ public class Grenade : MonoBehaviour
 
     void physUpdate()
     {
-        rewinder.physUpdate(grenadeIsRewinding);
+        rewinder.physUpdate();
         if (grenadeIsRewinding)
         {
             Rewind();

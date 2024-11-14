@@ -5,32 +5,35 @@ using UnityEngine;
 public class SampleCube : MonoBehaviour
 {
 
+    // Simplest implementation of Rewindable
+
     Rigidbody rb;
 
     Rewindable rewinder;
 
-    [SerializeField] GameManager gameManager;
+    GlobalIsRewindingScript globalRewinder;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rewinder = new Rewindable(gameObject);
+        globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
         // Need this snippet to check if rewinding
         // --------------------------------
-        if (gameManager.globalIsRewinding)
+        if (globalRewinder.fireStartRewind)
         {
-            StartRewind();
+            rewinder.StartRewind();
         }
-        if (gameManager.globalIsRewinding)
+        if (globalRewinder.fireStopRewind)
         {
-            StopRewind();
+            rewinder.StopRewind();
         }
         // --------------------------------
 
@@ -40,18 +43,8 @@ public class SampleCube : MonoBehaviour
     {
         // Need this line to apply rewinding
         // --------------------------------
-        rewinder.physUpdate(gameManager.globalIsRewinding);
+        rewinder.physUpdate();
         // --------------------------------
-    }
-
-    void StartRewind()
-    {
-        rewinder.StartRewind();
-    }
-
-    void StopRewind()
-    {
-        rewinder.StopRewind();
     }
 
 }

@@ -4,22 +4,31 @@ using UnityEngine;
 
 public class GlobalIsRewindingScript : MonoBehaviour
 {
-    public bool globalIsRewinding;
 
-    private void Awake()
-    {
-        globalIsRewinding = false;
-    }
+    public bool fireStartRewind;
+    public bool fireStopRewind;
+
+    public bool rewindAlreadyFired = false;
+
+    float totalGameTime = 15f;
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        totalGameTime -= Time.deltaTime;
+
+        fireStartRewind = false;
+        fireStopRewind = false;
+
+        if (totalGameTime <= 0 && !rewindAlreadyFired)
         {
-            globalIsRewinding = true;
+            Debug.Log("Firing Global Start Rewind");
+            fireStartRewind = true;
+            rewindAlreadyFired = true;
         }
         if (Input.GetKeyUp(KeyCode.T))
         {
-            globalIsRewinding = false;
+            Debug.Log("Firing Global Stop Rewind");
+            fireStopRewind = true;
         }
     }
 }

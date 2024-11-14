@@ -14,6 +14,7 @@ public class GunScriptableObject : ScriptableObject
     public Vector3 SpawnRotation;
 
     public ShootConfigurationScriptableObject ShootConfig;
+    public AmmoConfigScriptableObject AmmoConfig;
     public TrailConfigScriptableObject TrailConfig;
 
     private MonoBehaviour ActiveMonoBehaviour;
@@ -52,6 +53,9 @@ public class GunScriptableObject : ScriptableObject
             ShootDirection.Normalize();
 
             GameObject spawnedBullet =  Instantiate(BulletModelPrefab, ShootSystem.transform.position, ShootSystem.transform.rotation);
+            spawnedBullet.transform.Rotate(90, 0, 0);
+
+            AmmoConfig.currentClipAmmo--;
 
             ActiveMonoBehaviour.StartCoroutine(
                    PlayTrail(
@@ -86,6 +90,11 @@ public class GunScriptableObject : ScriptableObject
 
         }
 
+    }
+
+    public void endReload()
+    {
+        AmmoConfig.Reload();
     }
 
     private IEnumerator PlayTrail(Vector3 StartPoint, Vector3 EndPoint, RaycastHit hit)
@@ -152,4 +161,10 @@ public class GunScriptableObject : ScriptableObject
     {
         return Instantiate(ShootConfig.BulletPrefab);
     }
+
+    public void populateAmmo()
+    {
+        AmmoConfig.populateAmmo();
+    }
+
 }

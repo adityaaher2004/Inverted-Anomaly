@@ -18,11 +18,11 @@ public class Rewindable
      * 
      * void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            if (globalRewinder.fireStopRewind)
             {
                 rewinder.StartRewind();
             }
-            if (Input.GetKeyUp(KeyCode.R))
+            if (globalRewinder.fireStopRewind)
             {
                 rewinder.StopRewind();
             }
@@ -44,9 +44,11 @@ public class Rewindable
      */
 
     List<PointInTime> points = new List<PointInTime>();
+    bool isRewinding;
 
     Transform transform;
     GameObject gameObject;
+    GlobalIsRewindingScript globalRewinder;
 
 
     /*
@@ -59,12 +61,16 @@ public class Rewindable
     {
         this.gameObject = gameObject;
         this.transform = gameObject.transform;
+        globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
+        isRewinding = false;
     }
 
     public Rewindable(GameObject gameObject, bool destructable)
     {
         this.gameObject = gameObject;
         this.transform = gameObject.transform;
+        globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
+        isRewinding = false;
         this.destructMode = destructable;
     }
 
@@ -93,18 +99,22 @@ public class Rewindable
     public void StartRewind()
     {
         gameObject.GetComponent<Rigidbody>().isKinematic = true;
+        gameObject.GetComponent<Collider>().enabled = false;
+        isRewinding = true;
     }
 
     public void StopRewind()
     {
         gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        gameObject.GetComponent<Collider>().enabled = true;
+        isRewinding = false;
         if (destructMode && points.Count <= 0)
         {
             UnityEngine.Object.Destroy(gameObject);
         }
     }
 
-    public void physUpdate(bool isRewinding)
+    public void physUpdate()
     {
         if (isRewinding)
         {

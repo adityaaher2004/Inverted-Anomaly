@@ -28,6 +28,7 @@ public class PlayerGunSelector : MonoBehaviour
         }
 
         ActiveGun = gun;
+        gun.populateAmmo();
         gun.Spawn(GunParent, this);
 
         Transform[] allChildren = GunParent.GetComponentsInChildren<Transform>();

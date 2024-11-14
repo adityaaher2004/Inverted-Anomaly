@@ -10,8 +10,7 @@ public class Bullet : MonoBehaviour
 
     Rigidbody rb;
     Rewindable rewinder;
-
-    public bool isRewinding;
+    GlobalIsRewindingScript globalRewinder;
 
     private void Awake()
     {
@@ -21,26 +20,32 @@ public class Bullet : MonoBehaviour
     void Start()
     {
         rewinder = new Rewindable(gameObject, true);
-        rb.AddForce(transform.forward * startImpulse, ForceMode.Impulse);
+        globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
+
+        rb.AddForce(transform.up * startImpulse, ForceMode.Impulse);
         Debug.Log($"Bullet Spawned at {transform.position}");
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if (globalRewinder.fireStartRewind)
         {
             rewinder.StartRewind();
-            isRewinding = true;
         }
-        if (Input.GetKeyUp(KeyCode.T))
+        if (globalRewinder.fireStopRewind)
         {
             rewinder.StopRewind();
-            isRewinding = false;
         }
     }
 
     void FixedUpdate()
     {
-        rewinder.physUpdate(isRewinding);
+        rewinder.physUpdate();
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        rb.velocity = rb.velocity * 0.05f;
+    }
+
 }

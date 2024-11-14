@@ -101,8 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cookTime: 2
   isDestructable: 0
+  blastRadius: 5
   blastForce: 5000
-  gameManager: {fileID: 6693250549852095747, guid: c74747102f0454947adbbe29ce490378, type: 3}
 --- !u!136 &5591916150515666939
 CapsuleCollider:
   m_ObjectHideFlags: 0

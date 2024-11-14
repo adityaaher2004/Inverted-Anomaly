@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Rendering;
+using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,8 +12,10 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     [SerializeField] TextMeshProUGUI globalGameTimeText;
+
     float globalGameTime;
 
+    GlobalIsRewindingScript globalRewinder;
     public bool globalIsRewinding;
 
     Stack<float> globalGameTimePoints;
@@ -30,6 +34,7 @@ public class GameManager : MonoBehaviour
         globalIsRewinding = false;
         globalGameTime = 0;
         globalGameTimePoints = new Stack<float>();
+        globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
     }
     void Start()
     {
@@ -48,11 +53,11 @@ public class GameManager : MonoBehaviour
         {
             globalGameTimeText.text = "" + seconds + ":" + microSeconds;
         }
-        if (Input.GetKeyDown(KeyCode.T))
+        if (globalRewinder.fireStartRewind)
         {
             StartRewind();
         }
-        if (Input.GetKeyUp(KeyCode.T))
+        if (globalRewinder.fireStopRewind)
         {
             StopRewind();
         }
@@ -94,7 +99,7 @@ public class GameManager : MonoBehaviour
     {
         globalIsRewinding = false;
     }
-   
+
 
     void physUpdate()
     {
@@ -107,4 +112,5 @@ public class GameManager : MonoBehaviour
             Record();
         }
     }
+
 }

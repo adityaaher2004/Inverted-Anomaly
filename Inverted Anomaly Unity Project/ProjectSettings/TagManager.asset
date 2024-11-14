@@ -5,6 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - CinemachineTarget
+  - GlobalRewinder
+  - ArmatureBone
+  - Bullet
+  - CamFollower
+  - PlayerUIEventSystem
+  - InvertedPlayer
   layers:
   - Default
   - TransparentFX

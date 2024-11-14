@@ -1,35 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerRewinder : MonoBehaviour
 {
+    bool playerIsRewinding;
     public Transform[] bones;
     Stack<PlayerKeyFrame> keyframes;
-
     Stack<PointInTime> points;
 
-    [SerializeField] GameManager gameManager;
+    GlobalIsRewindingScript globalRewinder;
 
-
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
+        playerIsRewinding = false;
         points = new Stack<PointInTime>();
         keyframes = new Stack<PlayerKeyFrame>();
 
-        bones = gameObject.GetComponentsInChildren<Transform>();
+        GameObject[] bonesTemp = GameObject.FindGameObjectsWithTag("ArmatureBone");
+
+        foreach (GameObject b in bonesTemp)
+        {
+            bones.Append(b.transform);
+        }
+
+        globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        if (gameManager.globalIsRewinding)
+        if (globalRewinder.fireStartRewind)
         {
             StartRewind();
         }
-        if (gameManager.globalIsRewinding)
+        if (globalRewinder.fireStopRewind)
         {
             StopRewind();
         }
@@ -76,11 +83,13 @@ public class PlayerRewinder : MonoBehaviour
     void StartRewind()
     {
         gameObject.GetComponent<Animator>().enabled = false;
+        playerIsRewinding = true;
     }
 
     void StopRewind()
     {
         gameObject.GetComponent<Animator>().enabled = true;
+        playerIsRewinding = false;
     }
 
     void FixedUpdate()
@@ -90,7 +99,7 @@ public class PlayerRewinder : MonoBehaviour
 
     void physUpdate()
     {
-        if (gameManager.globalIsRewinding)
+        if (playerIsRewinding)
         {
             Rewind();
         }
