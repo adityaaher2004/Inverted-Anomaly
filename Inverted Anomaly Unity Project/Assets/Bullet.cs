@@ -8,9 +8,22 @@ public class Bullet : MonoBehaviour
 
     [SerializeField] public float startImpulse = 1000f;
 
-    Rigidbody rb;
+
     Rewindable rewinder;
     GlobalIsRewindingScript globalRewinder;
+
+
+    Rigidbody rb;
+    [field : SerializeField]
+
+    public Vector3 SpwnLocation
+    {
+        get;
+        private set;
+    }
+
+    public delegate void CollisionEvent(Bullet bullet, Collision collision);
+    public event CollisionEvent OnCollision;
 
     private void Awake()
     {
@@ -46,6 +59,14 @@ public class Bullet : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         rb.velocity = rb.velocity * 0.05f;
+        OnCollision?.Invoke(this, collision);
+    }
+
+    private void OnDisable()
+    {
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        OnCollision = null;
     }
 
 }

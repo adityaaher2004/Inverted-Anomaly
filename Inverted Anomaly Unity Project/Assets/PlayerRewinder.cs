@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class PlayerRewinder : MonoBehaviour
 {
     bool playerIsRewinding;
-    public Transform[] bones;
+    public List<Transform> bones;
+    public List<Transform> boneParents;
     Stack<PlayerKeyFrame> keyframes;
     Stack<PointInTime> points;
 
@@ -18,12 +21,20 @@ public class PlayerRewinder : MonoBehaviour
         points = new Stack<PointInTime>();
         keyframes = new Stack<PlayerKeyFrame>();
 
-        GameObject[] bonesTemp = GameObject.FindGameObjectsWithTag("ArmatureBone");
+        Transform[] bonesTemp = gameObject.GetComponentsInChildren<Transform>();
 
-        foreach (GameObject b in bonesTemp)
+        Debug.Log($"Total transforms = {bonesTemp.Length}");
+
+        foreach (Transform item in bonesTemp)
         {
-            bones.Append(b.transform);
+            bones.Add(item.transform);
+            boneParents.Add(item.parent);
         }
+
+        Debug.Log($"Total Bones = {bones.Count}");
+
+        Debug.Log($"{bones[0].position}, {bones[0].localPosition}");
+
 
         globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
     }
@@ -46,12 +57,12 @@ public class PlayerRewinder : MonoBehaviour
     {
         points.Push(new PointInTime(gameObject.transform.position, gameObject.transform.rotation));
 
-        PlayerKeyFrame frameData = new PlayerKeyFrame(bones.Length);
+        PlayerKeyFrame frameData = new PlayerKeyFrame(bones.Count);
 
-        for (int i = 0; i < bones.Length; i++)
+        for (int i = 0; i < bones.Count; i++)
         {
-            frameData.bonePositions[i] = bones[i].localPosition;
-            frameData.boneRotations[i] = bones[i].localRotation;
+            frameData.bonePositions[i] = bones[i].position;
+            frameData.boneRotations[i] = bones[i].rotation;
         }
 
         keyframes.Push(frameData);
@@ -67,10 +78,10 @@ public class PlayerRewinder : MonoBehaviour
 
             PlayerKeyFrame frameData = keyframes.Pop();
 
-            for (int i = 0; i < bones.Length; i++)
+            for (int i = 0; i < bones.Count; i++)
             {
-                bones[i].localPosition = frameData.bonePositions[i];
-                bones[i].localRotation = frameData.boneRotations[i];
+                bones[i].position = frameData.bonePositions[i];
+                bones[i].rotation = frameData.boneRotations[i];
             }
 
         }
@@ -82,14 +93,22 @@ public class PlayerRewinder : MonoBehaviour
 
     void StartRewind()
     {
+        //for (int i = 0; i < bones.Count; i++)
+        //{
+        //    bones[i].parent = null;
+        //}
         gameObject.GetComponent<Animator>().enabled = false;
         playerIsRewinding = true;
     }
 
     void StopRewind()
     {
-        gameObject.GetComponent<Animator>().enabled = true;
         playerIsRewinding = false;
+        gameObject.GetComponent<Animator>().enabled = true;
+        //for (int i = 0; i < bones.Count; i++)
+        //{
+        //    bones[i].parent = boneParents[i];
+        //}
     }
 
     void FixedUpdate()

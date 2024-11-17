@@ -23,9 +23,14 @@ public class GunScriptableObject : ScriptableObject
     private ParticleSystem ShootSystem;
     private ObjectPool<TrailRenderer> TrailPool;
 
-    public void Spawn(Transform Parent, MonoBehaviour ActiveMonoBehaviour)
+    private Camera ActiveCamera;
+
+
+    public void Spawn(Transform Parent, MonoBehaviour ActiveMonoBehaviour, Camera ActiveCamera = null)
     {
         this.ActiveMonoBehaviour = ActiveMonoBehaviour;
+        this.ActiveCamera = ActiveCamera;
+
         LastShootTime = 0;
         TrailPool= new ObjectPool<TrailRenderer>(CreateTrail);
 
@@ -36,6 +41,11 @@ public class GunScriptableObject : ScriptableObject
         ShootSystem = Model.GetComponentInChildren<ParticleSystem>();
     }
 
+    public void UpdateCamera(Camera ActiveCamera)
+    {
+        this.ActiveCamera = ActiveCamera;
+    }
+
     public void Shoot(){
         if (Time.time > ShootConfig.FireRate + LastShootTime)
         {
@@ -43,19 +53,22 @@ public class GunScriptableObject : ScriptableObject
 
             ShootSystem.Play();
 
-            Vector3 ShootDirection = ShootSystem.transform.forward /* +
-                                        new Vector3(
-                                            Random.Range(-ShootConfig.Spread.x, ShootConfig.Spread.x),
-                                            Random.Range(-ShootConfig.Spread.y, ShootConfig.Spread.y),
-                                            Random.Range(-ShootConfig.Spread.z, ShootConfig.Spread.z)
-            ) */ ;
+            Vector3 ShootDirection = Vector3.zero;
+
+            if (ShootConfig.ShootType == ShootType.FromGun)
+            {
+                ShootDirection = ShootSystem.transform.forward;
+            }
+            else
+            {
+                ShootDirection = ActiveCamera.transform.forward + ActiveCamera.transform.TransformDirection(ShootDirection);
+            }
 
             ShootDirection.Normalize();
 
             GameObject spawnedBullet =  Instantiate(BulletModelPrefab, ShootSystem.transform.position, ShootSystem.transform.rotation);
             spawnedBullet.transform.Rotate(90, 0, 0);
 
-            AmmoConfig.currentClipAmmo--;
 
             ActiveMonoBehaviour.StartCoroutine(
                    PlayTrail(
@@ -64,7 +77,7 @@ public class GunScriptableObject : ScriptableObject
                        new RaycastHit()
                        ));
 
-
+            AmmoConfig.currentClipAmmo--;
 
             // Only for HitScan Shots, for Projectile Shots, we do ProjectileShoot
             /*if (Physics.Raycast(ShootSystem.transform.position, ShootDirection, out RaycastHit hit, float.MaxValue, ShootConfig.HitMask))
@@ -90,6 +103,39 @@ public class GunScriptableObject : ScriptableObject
 
         }
 
+    }
+
+    private void DoProjectileShoot(Vector3 ShootDirection)
+    {
+        Bullet bullet = CreateBullet();
+        bullet.transform.Rotate(90, 0, 0);
+        bullet.gameObject.SetActive(true);
+        bullet.OnCollision += HandleBulletCollision;
+
+        TrailRenderer trail = TrailPool.Get();
+        if (trail != null)
+        {
+            trail.transform.SetParent(bullet.transform, false);
+            trail.gameObject.SetActive(true);
+            trail.transform.localPosition = Vector3.zero;
+            trail.emitting = true;
+        }
+        
+    }
+
+    public Vector3 GetGunForward()
+    {
+        return Model.transform.forward;
+    }
+
+    private void HandleBulletCollision(Bullet bullet, Collision collision)
+    {
+        TrailRenderer trail = bullet.GetComponentInChildren<TrailRenderer>();
+        if (trail != null)
+        {
+            trail.transform.SetParent(null, true);
+            ActiveMonoBehaviour.StartCoroutine(DelayedDisableTrail(trail));
+        }
     }
 
     public void endReload()
@@ -134,9 +180,28 @@ public class GunScriptableObject : ScriptableObject
 
     }
 
+    public Vector3 GetRaycastOrigin()
+    {
+        Vector3 origin = ShootSystem.transform.position;
+
+        if (ShootConfig.ShootType == ShootType.FromCamera)
+        {
+            origin = ActiveCamera.transform.position +
+                ActiveCamera.transform.forward * Vector3.Distance(
+                    ActiveCamera.transform.position,
+                    ShootSystem.transform.position);
+        }
+
+        return origin;
+
+    }
+
     private IEnumerator DelayedDisableTrail(TrailRenderer trail)
     {
-        yield return new WaitForSeconds(TrailConfig.Duration * 2);
+        yield return new WaitForSeconds(TrailConfig.Duration);
+        yield return null;
+        trail.emitting = false;
+        trail.gameObject.SetActive(false);
         TrailPool.Release(trail);
     }
 

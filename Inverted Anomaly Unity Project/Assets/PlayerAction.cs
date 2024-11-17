@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class PlayerAction : MonoBehaviour
@@ -13,6 +14,8 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] private Animator playerAnimator;
 
     [SerializeField] private PlayerIK InverseKinematics;
+
+    [SerializeField] private RawImage Crosshair;
 
     private bool isReloading;
 
@@ -33,7 +36,38 @@ public class PlayerAction : MonoBehaviour
             InverseKinematics.ElbowIKAmount = 0.25f;
             isReloading = true;
         }
+        UpdateCrosshair();
+    }
 
+    private void UpdateCrosshair()
+    {
+        if (gunSelector.ActiveGun.ShootConfig.ShootType == ShootType.FromGun)
+        {
+            Vector3 gunTipPoint = gunSelector.ActiveGun.GetRaycastOrigin();
+            Vector3 gunForward = gunSelector.ActiveGun.GetGunForward();
+            Vector3 hitPoint = gunTipPoint + gunForward * 10;
+
+            if (Physics.Raycast(
+                gunTipPoint, gunForward, out RaycastHit hit, float.MaxValue, gunSelector.ActiveGun.ShootConfig.HitMask))
+            {
+                hitPoint = hit.point;
+            }
+
+            Vector3 screenSpaceLocation = gunSelector.camera.WorldToScreenPoint(hitPoint);
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                (RectTransform)Crosshair.transform.parent,
+                screenSpaceLocation,
+                null,
+                out Vector2 localPosition))
+            {
+                Crosshair.rectTransform.anchoredPosition = localPosition;
+            }
+            else
+            {
+                Crosshair.rectTransform.anchoredPosition = Vector2.zero;
+            }
+
+        }
     }
 
     private void EndReload()

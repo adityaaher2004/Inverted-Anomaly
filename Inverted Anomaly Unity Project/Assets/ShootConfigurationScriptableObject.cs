@@ -12,4 +12,6 @@ public class ShootConfigurationScriptableObject : ScriptableObject
     public Bullet BulletPrefab;
     public float SpawnForce = 400f;
 
+    public ShootType ShootType = ShootType.FromGun;
+
 }
