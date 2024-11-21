@@ -35,7 +35,7 @@ public class Bullet : MonoBehaviour
         rewinder = new Rewindable(gameObject, true);
         globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
 
-        rb.AddForce(transform.up * startImpulse, ForceMode.Impulse);
+        // rb.AddForce(transform.up * startImpulse, ForceMode.Impulse);
         Debug.Log($"Bullet Spawned at {transform.position}");
     }
 
@@ -62,11 +62,9 @@ public class Bullet : MonoBehaviour
         OnCollision?.Invoke(this, collision);
     }
 
-    private void OnDisable()
+    public void Shoot(Vector3 direction)
     {
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        OnCollision = null;
+        rb.AddForce(direction * startImpulse, ForceMode.Impulse);
     }
 
 }

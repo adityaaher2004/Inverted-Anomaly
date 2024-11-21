@@ -11,7 +11,7 @@ public class PlayerGunSelector : MonoBehaviour
     [SerializeField] private List<GunScriptableObject> Guns;
     [SerializeField] private PlayerIK InverseKinematics;
 
-    [SerializeField] public Camera PlayerCamera;
+    [SerializeField] public Camera Camera;
 
 
 
@@ -30,21 +30,17 @@ public class PlayerGunSelector : MonoBehaviour
             return;
         }
 
-        if (PlayerCamera == null)
+        if (Camera == null)
         {
-            PlayerCamera = gameObject.GetComponent<Camera>();
+            Camera = GameObject.FindFirstObjectByType<Camera>();
         }
 
         ActiveGun = gun;
         gun.populateAmmo();
-        gun.Spawn(GunParent, this, PlayerCamera);
+        gun.Spawn(GunParent, this, Camera);
 
-        Transform[] allChildren = GunParent.GetComponentsInChildren<Transform>();
-        InverseKinematics.LeftElbowIKTarget = allChildren.FirstOrDefault(child => child.name == "LeftElbow");
-        InverseKinematics.RightElbowIKTarget= allChildren.FirstOrDefault(child => child.name == "RightElbow");
-        InverseKinematics.LeftHandIKTarget= allChildren.FirstOrDefault(child => child.name == "LeftHand");
-        InverseKinematics.RightHandIKTarget= allChildren.FirstOrDefault(child => child.name == "RightHand");
-
+        InverseKinematics.SetGunStyle(ActiveGun.Type == GunType.Glock);
+        InverseKinematics.Setup(GunParent);
 
     }
 }

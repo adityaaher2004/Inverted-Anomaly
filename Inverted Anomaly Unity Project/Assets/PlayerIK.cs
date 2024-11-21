@@ -56,8 +56,8 @@ public class PlayerIK : MonoBehaviour
 
     public void SetGunStyle(bool OneHanded)
     {
-        Animator.SetBool("Is2HandedGun", !OneHanded);
-        Animator.SetBool("Is1HandedGun", OneHanded);
+        Animator.SetBool("isTwoHanded", !OneHanded);
+        Animator.SetBool("isOneHanded", OneHanded);
     }
 
     public void Setup(Transform GunParent)

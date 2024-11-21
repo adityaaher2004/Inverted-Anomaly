@@ -46,4 +46,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalGameTimeText: {fileID: 0}
   globalIsRewinding: 0
-  prefabGlobalIsRewinding: {fileID: 6080068460731185543, guid: b8e045ad3d9e6e140bf970885d7d1645, type: 3}

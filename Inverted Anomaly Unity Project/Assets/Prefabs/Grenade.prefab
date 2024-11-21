@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b47ea85fcd6072b4f86168f8e563ea2c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.215
+      value: -8.707
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b47ea85fcd6072b4f86168f8e563ea2c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.679
+      value: 1.858
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b47ea85fcd6072b4f86168f8e563ea2c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.039
+      value: 1.53
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b47ea85fcd6072b4f86168f8e563ea2c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 995b98e866e56684798a6040b2dae81d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cookTime: 2
+  cookTime: 5
   isDestructable: 0
   blastRadius: 5
   blastForce: 5000

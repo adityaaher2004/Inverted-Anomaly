@@ -53,27 +53,42 @@ public class GunScriptableObject : ScriptableObject
 
             ShootSystem.Play();
 
-            Vector3 ShootDirection = Vector3.zero;
+            Vector3 mouseWorldPosition = Vector3.zero;
+            Vector2 center = new Vector2(Screen.width / 2f, Screen.height / 2f);
 
-            if (ShootConfig.ShootType == ShootType.FromGun)
+            Ray ray = Camera.main.ScreenPointToRay(center);
+            if (Physics.Raycast(ray, out RaycastHit hit, 999f, ShootConfig.HitMask))
             {
-                ShootDirection = ShootSystem.transform.forward;
+                mouseWorldPosition = hit.point;
             }
-            else
-            {
-                ShootDirection = ActiveCamera.transform.forward + ActiveCamera.transform.TransformDirection(ShootDirection);
-            }
+
+            Vector3 worldAimTarget = mouseWorldPosition;
+            Vector3 aimDirection = (worldAimTarget - Model.transform.position).normalized;
+
+            Vector3 ShootDirection = aimDirection;
+
+            //if (ShootConfig.ShootType == ShootType.FromGun)
+            //{
+            //    ShootDirection = ShootSystem.transform.forward;
+            //}
+            //else
+            //{
+            //    ShootDirection = ActiveCamera.transform.forward + ActiveCamera.transform.TransformDirection(ShootDirection);
+            //}
 
             ShootDirection.Normalize();
 
-            GameObject spawnedBullet =  Instantiate(BulletModelPrefab, ShootSystem.transform.position, ShootSystem.transform.rotation);
-            spawnedBullet.transform.Rotate(90, 0, 0);
+            //GameObject spawnedBullet =  Instantiate(BulletModelPrefab, ShootSystem.transform.position, Quaternion.Euler(aimDirection));
+            //spawnedBullet.transform.Rotate(90, 0, 0);
+
+            Bullet bullet = CreateBullet();
+            bullet.Shoot(aimDirection);
 
 
             ActiveMonoBehaviour.StartCoroutine(
                    PlayTrail(
-                       spawnedBullet.transform.position,
-                       spawnedBullet.transform.position + (ShootDirection * TrailConfig.MissDistance * 2),
+                       ShootSystem.transform.position,
+                       ShootSystem.transform.position + (2 * TrailConfig.MissDistance * ShootDirection),
                        new RaycastHit()
                        ));
 
@@ -224,7 +239,7 @@ public class GunScriptableObject : ScriptableObject
 
     private Bullet CreateBullet()
     {
-        return Instantiate(ShootConfig.BulletPrefab);
+        return Instantiate(ShootConfig.BulletPrefab, ShootSystem.transform.position, ShootSystem.transform.rotation);
     }
 
     public void populateAmmo()

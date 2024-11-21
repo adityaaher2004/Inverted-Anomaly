@@ -36,6 +36,9 @@ public class InvertGamePlay : MonoBehaviour
             GameObject newPlayer = Instantiate(PlayerPrefab, ZoneB.transform.position, ZoneB.transform.rotation);
             newPlayer.GetComponent<PlayerInput>().camera = currentPlayer.GetComponent<PlayerInput>().camera;
             newPlayer.GetComponent<PlayerInput>().ActivateInput();
+            newPlayer.GetComponent<PlayerAction>().Crosshair = currentPlayer.GetComponent<PlayerAction>().Crosshair;
+            newPlayer.GetComponent<ThirdPersonShooterController>().aimColliderMask = currentPlayer.GetComponent<ThirdPersonShooterController>().aimColliderMask;
+            newPlayer.GetComponent<ThirdPersonShooterController>().aimTransform = currentPlayer.GetComponent<ThirdPersonShooterController>().aimTransform;
 
             currentPlayer.GetComponent<StarterAssetsInputs>().enabled = false;
             currentPlayer.GetComponent<PlayerInput>().enabled =  false;
@@ -45,6 +48,7 @@ public class InvertGamePlay : MonoBehaviour
 
             newPlayer.GetComponent<PlayerInput>().enabled = false;
             newPlayer.GetComponent<PlayerInput>().enabled = true;
+            newPlayer.GetComponent<PlayerRewinder>().enabled = false;
 
             instantiated = true;
 

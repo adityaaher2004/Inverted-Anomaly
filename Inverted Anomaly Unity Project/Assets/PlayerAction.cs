@@ -15,13 +15,13 @@ public class PlayerAction : MonoBehaviour
 
     [SerializeField] private PlayerIK InverseKinematics;
 
-    [SerializeField] private RawImage Crosshair;
+    [SerializeField] public RawImage Crosshair;
 
     private bool isReloading;
 
     private void Update()
     {
-        if (Input.GetMouseButton(0) && gunSelector.ActiveGun != null)
+        if ((Input.GetMouseButton(0) || Input.GetKeyDown(KeyCode.Return)) && gunSelector.ActiveGun != null)
         {
             if (gunSelector.ActiveGun.AmmoConfig.currentClipAmmo > 0 && !isReloading)
             {
@@ -36,11 +36,12 @@ public class PlayerAction : MonoBehaviour
             InverseKinematics.ElbowIKAmount = 0.25f;
             isReloading = true;
         }
-        UpdateCrosshair();
+         // UpdateCrosshair();
     }
 
     private void UpdateCrosshair()
     {
+
         if (gunSelector.ActiveGun.ShootConfig.ShootType == ShootType.FromGun)
         {
             Vector3 gunTipPoint = gunSelector.ActiveGun.GetRaycastOrigin();
@@ -53,7 +54,7 @@ public class PlayerAction : MonoBehaviour
                 hitPoint = hit.point;
             }
 
-            Vector3 screenSpaceLocation = gunSelector.camera.WorldToScreenPoint(hitPoint);
+            Vector3 screenSpaceLocation = gunSelector.Camera.WorldToScreenPoint(hitPoint);
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 (RectTransform)Crosshair.transform.parent,
                 screenSpaceLocation,
