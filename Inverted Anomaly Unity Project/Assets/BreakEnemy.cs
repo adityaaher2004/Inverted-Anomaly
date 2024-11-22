@@ -15,6 +15,8 @@ public class BreakEnemy : MonoBehaviour
     List<Transform> bones;
     List<Transform> boneParents;
 
+    bool alreadyDetached = false;
+
     bool isRewinding = false;
 
     Stack<float> health_stack;
@@ -23,6 +25,9 @@ public class BreakEnemy : MonoBehaviour
 
     private void Awake()
     {
+        bones = new List<Transform>();
+        boneParents = new List<Transform>();
+
         Transform[] bonesTemp = gameObject.GetComponentsInChildren<Transform>();
         foreach (Transform item in bonesTemp)
         {
@@ -31,6 +36,7 @@ public class BreakEnemy : MonoBehaviour
                 bones.Add(item.transform);
                 boneParents.Add(item.parent);
             }
+            
         }
         health_stack = new Stack<float>();
         globalRewinder = GameObject.FindFirstObjectByType<GlobalIsRewindingScript>();
@@ -75,7 +81,12 @@ public class BreakEnemy : MonoBehaviour
     {
         if (health_stack.Count > 0)
         {
-            health = health_stack.Pop();
+            SetHealth(health_stack.Pop());
+            if (health > 0 & alreadyDetached)
+            {
+                AttachParents();
+                alreadyDetached = false;
+            }
         }
         else
         {
@@ -101,14 +112,20 @@ public class BreakEnemy : MonoBehaviour
         {
             TakeDamage(damageAmt);
 
-            if (health <= 0)
+            if (health <= 0 && !alreadyDetached)
             {
                 DetachParents();
-
-                Instantiate(grenadePrefab);
+                alreadyDetached = true;
+                // Instantiate(grenadePrefab);
             }
         }
 
+    }
+
+    void SetHealth(float amt)
+    {
+        health = amt;
+        gameObject.GetComponentInChildren<HealthBar>().SetHealth(amt);
     }
 
     void TakeDamage(float amt)
@@ -121,24 +138,16 @@ public class BreakEnemy : MonoBehaviour
     {
         foreach (Transform b in bones)
         {
-            if (b.CompareTag("ArmatureBone"))
-            {
-                b.parent = null;
-                b.AddComponent<Rigidbody>();
-            }
+            b.SetParent(null, true);
+            b.AddComponent<Rigidbody>();
         }
     }
 
     void AttachParents()
     {
-
         foreach (Transform b in bones)
         {
-            if (b.CompareTag("ArmatureBone"))
-            {
-                b.parent = boneParents[bones.IndexOf(b)];
-                b.AddComponent<Rigidbody>();
-            }
+            b.SetParent(boneParents[bones.IndexOf(b)], false);
         }
     }
 }

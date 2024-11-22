@@ -5505,6 +5505,7 @@ MonoBehaviour:
   easeSlider: {fileID: 1218387521}
   maxHealth: 100
   health: 0
+  cam: {fileID: 0}
 --- !u!850595691 &1695285423
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -17275,6 +17276,10 @@ PrefabInstance:
       propertyPath: m_Data.m_SourceObjects.m_Item0.transform
       value: 
       objectReference: {fileID: 843702267}
+    - target: {fileID: 6694448708006860252, guid: 43393c63cf7b6c14390d91803fe85362, type: 3}
+      propertyPath: Grounded
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7581160323562203482, guid: 43393c63cf7b6c14390d91803fe85362, type: 3}
       propertyPath: m_Camera
       value: 

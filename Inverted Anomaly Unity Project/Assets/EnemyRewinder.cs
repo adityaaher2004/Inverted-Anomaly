@@ -128,14 +128,4 @@ public class EnemyRewinder : MonoBehaviour
             Record();
         }
     }
-
-    public void DetachParents()
-    {
-
-    }
-
-    public void AttachParents()
-    {
-
-    }
 }
