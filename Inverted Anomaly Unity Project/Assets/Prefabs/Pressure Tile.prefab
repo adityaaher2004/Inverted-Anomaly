@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1122782754100820635}
   - component: {fileID: 1318777575369729930}
   - component: {fileID: 2157882402272214619}
-  - component: {fileID: 2916509995836004241}
   - component: {fileID: 3066744217382320618}
   - component: {fileID: 8568021262584903902}
+  - component: {fileID: -6272926595279303055}
   m_Layer: 0
   m_Name: Pressure Tile
   m_TagString: Untagged
@@ -86,21 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2916509995836004241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1800047262569395199}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7c99b7ceec7c0439aa223b5f1985d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectDuration: 1.5
-  rotationAmount: 6
-  rotationSpeed: 2
 --- !u!54 &3066744217382320618
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -117,7 +102,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -138,7 +123,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -149,3 +134,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.9907198, y: 1.7851253, z: 1}
   m_Center: {x: -0.0065704985, y: 0.39256275, z: 0}
+--- !u!114 &-6272926595279303055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800047262569395199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba7c99b7ceec7c0439aa223b5f1985d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

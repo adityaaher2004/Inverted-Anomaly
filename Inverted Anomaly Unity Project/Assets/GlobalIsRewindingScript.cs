@@ -10,7 +10,7 @@ public class GlobalIsRewindingScript : MonoBehaviour
 
     public bool rewindAlreadyFired = false;
 
-    float totalGameTime = 30f;
+    float totalGameTime = 80f;
 
     private void Update()
     {

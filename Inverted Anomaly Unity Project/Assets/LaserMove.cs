@@ -6,8 +6,8 @@ public class LaserMove : MonoBehaviour
 {
 
     private float direction = 1f;
-    float minZ = -23f;
-    float maxZ = 15f;
+    float minZ = -22f;
+    float maxZ = 13f;
     float step = 0.05f;
 
     Rigidbody rb;

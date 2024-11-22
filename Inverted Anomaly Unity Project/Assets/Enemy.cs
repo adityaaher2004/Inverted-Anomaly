@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] GameObject bullet;
 
     public NavMeshAgent agent;
 
@@ -13,19 +14,20 @@ public class Enemy : MonoBehaviour
     public LayerMask whatIsGround, whatIsPlayer;
 
     public Vector3 walkPoint;
-    public bool walkPointSet;
-    public float walkPointRange;
+    public bool walkPointSet = false;
+    public float walkPointRange = 10f;
 
-    public float timeBetweenAttacks;
-    bool alreadyAttacked;
+    public float timeBetweenAttacks = 4f;
+    bool alreadyAttacked = false;
 
-    public float sightRange, attackRange;
-    public bool playerInSight, playerInAttackRange;
+    public float sightRange = 10f, attackRange = 10f;
+    public bool playerInSight = false, playerInAttackRange = false;
 
 
     private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        agent = GetComponent<NavMeshAgent>();
     }
 
     // Start is called before the first frame update
@@ -42,7 +44,7 @@ public class Enemy : MonoBehaviour
 
         if (!playerInSight && !playerInAttackRange) Patrolling();
         if (playerInSight && !playerInAttackRange) ChasePlayer();
-        if (playerInSight && playerInAttackRange) AttackPlayer();
+        if (playerInSight) AttackPlayer();
     }
 
     void Patrolling()
@@ -80,6 +82,8 @@ public class Enemy : MonoBehaviour
 
         if (!alreadyAttacked)
         {
+
+            Shoot();
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
@@ -89,5 +93,22 @@ public class Enemy : MonoBehaviour
     void ResetAttack()
     {
         alreadyAttacked = false;
+    }
+
+    void Shoot()
+    {
+        Vector3 ShootDirection = (player.position - transform.position).normalized;
+
+        GameObject spawned = Instantiate(bullet, transform.position + 2 * ShootDirection, transform.rotation);
+        spawned.GetComponent<Rigidbody>().AddForce(ShootDirection * 100f, ForceMode.Impulse);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, sightRange);
+
     }
 }

@@ -11,13 +11,11 @@ public class HealthBar : MonoBehaviour
     public Slider easeSlider;
     public float maxHealth = 100f;
     public float health;
-    public GameObject cam;
     void Start()
     {
         health = maxHealth;
         slider.value = health;
         easeSlider.value = health;
-        cam = GameObject.FindGameObjectWithTag("MainCamera");
     }
 
     // Update is called once per frame
@@ -32,11 +30,6 @@ public class HealthBar : MonoBehaviour
         {
             easeSlider.value -= 0.125f;
         }
-    }
-
-    private void LateUpdate()
-    {
-        transform.LookAt(transform.position - cam.transform.forward);
     }
 
     public void TakeDamage(float amt)

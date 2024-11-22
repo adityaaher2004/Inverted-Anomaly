@@ -20,9 +20,9 @@ TagManager:
   - UI
   - BulletIgnore
   - Bullet
-  - 
-  - 
-  - 
+  - Player
+  - WhatIsPlayer
+  - WhatIsGround
   - 
   - 
   - 
