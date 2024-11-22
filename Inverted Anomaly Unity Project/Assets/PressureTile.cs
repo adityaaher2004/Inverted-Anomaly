@@ -7,8 +7,8 @@ using UnityEngine;
 public class PressureTile : MonoBehaviour
 {
 
-    float maxHeight = 4f;
-    float step = 0.25f;
+    float maxHeight = 5f;
+    float step = 0.05f;
     private bool isActivated;
 
     Rigidbody rb;
@@ -55,8 +55,11 @@ public class PressureTile : MonoBehaviour
         // --------------------------------
     }
 
-    private void OnTriggerExit()
+    private void OnCollisionEnter(Collision collision)
     {
-        isActivated = true;
+        if (collision.collider.tag == "Bullet")
+        {
+            isActivated = true;
+        }
     }
 }

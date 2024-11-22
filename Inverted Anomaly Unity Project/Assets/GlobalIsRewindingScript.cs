@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GlobalIsRewindingScript : MonoBehaviour
 {
@@ -10,7 +12,16 @@ public class GlobalIsRewindingScript : MonoBehaviour
 
     public bool rewindAlreadyFired = false;
 
-    float totalGameTime = 80f;
+    float totalGameTime = 60f;
+
+    [SerializeField] Transform EndB;
+    [SerializeField] Transform EndD;
+    [SerializeField] Transform Laval;
+    [SerializeField] TextMeshProUGUI gameOver;
+
+    bool reachedB;
+    bool reachedD;
+    bool touchedLava;
 
     private void Update()
     {
@@ -25,10 +36,10 @@ public class GlobalIsRewindingScript : MonoBehaviour
             fireStartRewind = true;
             rewindAlreadyFired = true;
         }
-        if (Input.GetKeyUp(KeyCode.T))
+        if (Input.GetKeyUp(KeyCode.R))
         {
-            Debug.Log("Firing Global Stop Rewind");
-            fireStopRewind = true;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
     }
 }

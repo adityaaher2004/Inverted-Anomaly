@@ -42,9 +42,13 @@ public class Enemy : MonoBehaviour
         playerInSight = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
+        float rand = Random.Range(0f, 20f);
+        if (rand > 10)
+        {
+            AttackPlayer();
+        }
         if (!playerInSight && !playerInAttackRange) Patrolling();
         if (playerInSight && !playerInAttackRange) ChasePlayer();
-        if (playerInSight) AttackPlayer();
     }
 
     void Patrolling()
@@ -76,13 +80,12 @@ public class Enemy : MonoBehaviour
 
     void AttackPlayer()
     {
-        agent.SetDestination(transform.position);
+        // agent.SetDestination(transform.position);
 
         transform.LookAt(player);
 
         if (!alreadyAttacked)
         {
-
             Shoot();
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);

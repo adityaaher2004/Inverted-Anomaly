@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
-public class Lava : MonoBehaviour
+
+public class EndWin : MonoBehaviour
 {
     // Start is called before the first frame update
 
@@ -19,7 +20,7 @@ public class Lava : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void OnCollisionEnter(Collision collision)
